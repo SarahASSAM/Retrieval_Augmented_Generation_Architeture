@@ -72,3 +72,29 @@ for i, embedding in enumerate(embeddings):
 
 # Étape 3 : Vérifier le nombre total de vecteurs stockés
 print(f"Nombre total de vecteurs dans la collection : {collection.count()}")
+
+
+############# 4
+
+# Fonction pour configurer un retriever
+def retrieve_descriptions(query, n_results=3):
+    """
+    Rechercher des descriptions pertinentes dans la base vectorielle.
+
+    Args:
+    - query (str): La requête utilisateur.
+    - n_results (int): Nombre de résultats à retourner.
+
+    Returns:
+    - Résultats de la recherche.
+    """
+    # Convertir la requête utilisateur en embedding
+    query_embedding = embedding_model.encode([query])[0]
+
+    # Effectuer la recherche dans la base vectorielle
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results
+    )
+    
+    return results
