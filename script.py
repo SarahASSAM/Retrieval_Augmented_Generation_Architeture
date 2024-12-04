@@ -1,4 +1,7 @@
 import json
+from sentence_transformers import SentenceTransformer
+import faiss
+import numpy as np
 
 # Charger le fichier JSONL
 def load_jsonl(file_path):
@@ -33,3 +36,17 @@ for description in descriptions:
 
 print(f"Nombre total de chunks créés : {len(segmented_texts)}")
 print("Exemple de chunk :", segmented_texts[:2])
+
+
+# Générer des embeddings pour chaque chunk
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+embeddings = embedding_model.encode(segmented_texts)
+
+# Créer un index FAISS pour les embeddings
+dimension = embeddings[0].shape[0]  # Dimension des vecteurs d'embeddings
+index = faiss.IndexFlatL2(dimension)  # Index basé sur la distance euclidienne
+
+# Ajouter les embeddings à l'index
+index.add(np.array(embeddings))
+
+print(f"Nombre de vecteurs indexés : {index.ntotal}")
