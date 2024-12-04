@@ -50,3 +50,25 @@ index = faiss.IndexFlatL2(dimension)  # Index basé sur la distance euclidienne
 index.add(np.array(embeddings))
 
 print(f"Nombre de vecteurs indexés : {index.ntotal}")
+
+
+########### 4. Création d’une base de données vectorielle ###############
+import chromadb
+
+# Étape 1 : Initialiser ChromaDB
+client = chromadb.Client()
+
+# Créer une collection pour stocker uniquement les embeddings
+collection = client.create_collection(name="product_embeddings")
+
+# Étape 2 : Ajouter uniquement les embeddings à la collection
+# Les IDs sont utilisés pour identifier chaque vecteur de manière unique
+for i, embedding in enumerate(embeddings):
+    collection.add(
+        ids=[f"vector_{i}"],  # ID unique pour chaque vecteur
+        embeddings=[embedding],  # Embedding uniquement
+        metadatas=[{"vector_id": i}]  # Identifier chaque vecteur avec un ID dans les métadonnées
+    )
+
+# Étape 3 : Vérifier le nombre total de vecteurs stockés
+print(f"Nombre total de vecteurs dans la collection : {collection.count()}")
